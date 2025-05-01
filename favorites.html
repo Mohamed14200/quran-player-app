@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المفضلة - مكتبة القرآن الصوتية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="app-header">
+        <div class="logo"><a href="index.html">مكتبة القرآن الصوتية</a></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">القراء</a></li>
+                <li><a href="favorites.html">المفضلة</a></li>
+                <li>
+                     <button id="theme-toggle" title="تبديل الوضع">
+                         <i id="theme-toggle-icon" class="fas fa-moon"></i>
+                     </button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <h2><i class="fas fa-heart" style="color: var(--heart-color);"></i> المفضلة</h2>
+        <ul class="favorites-list" id="favorites-list-container">
+            <!-- سيتم تعبئة المفضلة هنا -->
+        </ul>
+        <div class="empty-favorites" id="empty-favorites-message" style="display: none;">
+            <p><i class="fas fa-info-circle"></i> قائمة المفضلة فارغة.</p>
+            <p>يمكنك إضافة سور إلى المفضلة من صفحة القارئ بالضغط على أيقونة القلب <i class="far fa-heart"></i>.</p>
+             <a href="index.html" style="margin-top: 15px; display: inline-block;">العودة لاختيار القارئ</a>
+        </div>
+    </div>
+
+    <script src="data.js"></script> <!-- Needed for getSurahNameByIndex potentially -->
+    <script src="common.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePage(); // Theme setup
+
+            const favoritesListContainer = document.getElementById('favorites-list-container');
+            const emptyMessage = document.getElementById('empty-favorites-message');
+
+            function displayFavorites() {
+                favoritesListContainer.innerHTML = ''; // Clear current list
+                const favorites = getFavorites();
+
+                if (favorites.length === 0) {
+                    emptyMessage.style.display = 'block';
+                     favoritesListContainer.style.display = 'none';
+                } else {
+                     emptyMessage.style.display = 'none';
+                     favoritesListContainer.style.display = 'block';
+
+                    favorites.forEach(fav => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'favorite-item';
+                         // Use stored names, fallback if somehow missing
+                         const surahName = fav.surahName || getSurahNameByIndex(fav.surahIndex); // Ensure getSurahNameByIndex is available
+                         const reciterName = fav.reciterName || (typeof recitersData !== 'undefined' && recitersData[fav.reciterId] ? recitersData[fav.reciterId].name : 'قارئ غير معروف');
+
+                        listItem.innerHTML = `
+                            <div class="info">
+                                <span class="surah-name">سورة ${surahName}</span>
+                                <span class="reciter-name">القارئ: ${reciterName}</span>
+                            </div>
+                            <div class="actions">
+                                <a href="player.html?reciter=${fav.reciterId}&surah=${fav.surahIndex}" title="تشغيل هذه السورة">
+                                     <button class="play-btn"><i class="fas fa-play"></i> تشغيل</button>
+                                 </a>
+                                 <button class="remove-btn" data-reciter-id="${fav.reciterId}" data-surah-index="${fav.surahIndex}" title="إزالة من المفضلة">
+                                     <i class="fas fa-trash-alt"></i> إزالة
+                                 </button>
+                            </div>
+                        `;
+                        favoritesListContainer.appendChild(listItem);
+                    });
+
+                    // Add event listeners to remove buttons
+                    favoritesListContainer.querySelectorAll('.remove-btn').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const reciterId = button.getAttribute('data-reciter-id');
+                            const surahIndex = button.getAttribute('data-surah-index');
+                            removeFavorite(reciterId, surahIndex);
+                            displayFavorites(); // Refresh the list
+                        });
+                    });
+                }
+            }
+
+            displayFavorites(); // Initial display
+        });
+    </script>
+</body>
+</html>

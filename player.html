@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استمع للقرآن الكريم</title> <!-- Title will be updated -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <!-- Shared styles -->
+    <style>
+         /* Player-specific styles if needed, or keep them in style.css */
+         /* Ensure plyr styles are included */
+        .plyr { border-radius: 8px; margin-bottom: 15px; }
+        /* Add specific plyr dark mode styles from previous example if not already in style.css */
+         body.dark-mode .plyr--audio .plyr__controls { background: #424242; color: #e0e0e0; border: 1px solid #555; }
+         body.dark-mode .plyr__progress input[type=range] { color: var(--primary-color); }
+         body.dark-mode .plyr__volume input[type=range] { color: var(--primary-color); }
+         body.dark-mode .plyr__controls button.plyr__control:hover { background: var(--primary-darker); }
+         body.dark-mode .plyr__controls button.plyr__control svg { fill: #e0e0e0; }
+
+         /* Favorite button adjacent to surah name */
+         .surah-info-container {
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             margin-bottom: 15px;
+             gap: 10px; /* Space between name and button */
+         }
+         #current-surah {
+            margin: 0;
+            flex-grow: 1;
+            text-align: right;
+            font-weight: 600;
+            color: var(--primary-darker);
+            min-height: 27px;
+            line-height: 27px; /* Align baseline with button */
+         }
+         body.dark-mode #current-surah {
+             color: var(--primary-color);
+         }
+         #favorite-button {
+            flex-shrink: 0; /* Prevent button from shrinking */
+         }
+
+         /* Autoplay label */
+         .autoplay-label input {
+            margin-left: 8px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+         /* Download button */
+         .download-btn { display: inline-flex; align-items: center; gap: 8px; width: auto; padding: 10px 20px; background-color: var(--primary-color); color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; text-decoration: none; transition: background-color 0.3s ease, box-shadow 0.3s ease; }
+         .download-btn:hover { background-color: var(--primary-darker); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); }
+         .download-btn:disabled { background-color: #ccc; cursor: not-allowed; opacity: 0.7; }
+         body.dark-mode .download-btn:disabled { background-color: #777; }
+
+         /* Responsive adjustments for controls */
+         @media (max-width: 600px) {
+            .controls-extra { flex-direction: column; align-items: stretch; gap: 15px; }
+            .download-btn { width: 100%; justify-content: center; }
+            .options-container { justify-content: center; width: 100%;} /* Center checkbox */
+            .surah-info-container { flex-wrap: wrap; justify-content: flex-end; } /* Wrap favorite button below on small screens */
+            #current-surah { width: 100%; text-align: center; margin-bottom: 5px; }
+         }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+         <div class="logo"><a href="index.html">مكتبة القرآن الصوتية</a></div>
+         <nav>
+             <ul>
+                 <li><a href="index.html">القراء</a></li>
+                 <li><a href="favorites.html">المفضلة</a></li>
+                 <li>
+                      <button id="theme-toggle" title="تبديل الوضع">
+                          <i id="theme-toggle-icon" class="fas fa-moon"></i>
+                      </button>
+                 </li>
+             </ul>
+         </nav>
+    </header>
+
+    <div class="player-container" id="player-content" style="display: none;"> <!-- Hide until reciter data is loaded -->
+         <img src="" alt="" class="profile-img" id="reciter-image" onerror="this.onerror=null; this.src='placeholder.png';">
+         <h1 id="reciter-name"></h1>
+         <p class="reciter-title" id="reciter-riwaya"></p>
+
+         <div class="search-container">
+             <i class="fas fa-search"></i>
+             <input type="text" id="search-input" placeholder="ابحث عن سورة...">
+         </div>
+
+         <select id="chapter-select">
+             <option value="">اختر سورة</option>
+             <!-- Options will be populated by JavaScript -->
+         </select>
+
+        <div class="surah-info-container">
+             <p id="current-surah"> </p>
+             <button id="favorite-button" title="إضافة للمفضلة" disabled>
+                  <i class="far fa-heart"></i> <!-- Start with outline heart -->
+             </button>
+         </div>
+
+
+         <audio id="audio" controls></audio>
+
+         <div class="controls-extra" style="margin-top: 15px;"> <!-- Adjusted margin -->
+              <div class="options-container">
+                 <label class="autoplay-label" for="autoplay-toggle">
+                     التالي تلقائياً
+                     <input type="checkbox" id="autoplay-toggle">
+                 </label>
+              </div>
+             <a id="download-link" href="#" download style="display: block;">
+                 <button class="download-btn" id="download-button" disabled>
+                     <i class="fas fa-download"></i>
+                     <span>تحميل</span>
+                 </button>
+             </a>
+         </div>
+
+    </div>
+    <div id="loading-error" style="text-align: center; padding: 50px; font-size: 18px; display: none;">
+         <p>حدث خطأ أو لم يتم تحديد القارئ.</p>
+         <a href="index.html">العودة لاختيار القارئ</a>
+    </div>
+
+    <!-- Plyr JS -->
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script src="data.js"></script> <!-- Load data first -->
+    <script src="common.js"></script> <!-- Load common functions -->
+    <script>
+        let currentReciterId = null;
+        let currentReciterData = null;
+         // Declare player globally or ensure it's accessible in common.js if needed there
+         let player;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePage(); // Theme setup
+
+            const params = getQueryParams();
+            currentReciterId = params.reciter;
+            const initialSurah = params.surah; // Check if coming from favorites
+
+            if (!currentReciterId || typeof recitersData === 'undefined' || !recitersData[currentReciterId]) {
+                document.getElementById('loading-error').style.display = 'block';
+                document.getElementById('player-content').style.display = 'none'; // Hide player if error
+                return; // Stop execution if no valid reciter ID
+            }
+
+             currentReciterData = recitersData[currentReciterId];
+             saveLastReciter(currentReciterId); // Remember the last visited reciter
+
+            // --- Setup Player UI ---
+            const playerContent = document.getElementById('player-content');
+            document.title = `استمع إلى ${currentReciterData.name}`; // Update page title
+            document.getElementById('reciter-image').src = currentReciterData.image;
+            document.getElementById('reciter-image').alt = currentReciterData.name;
+            document.getElementById('reciter-name').textContent = currentReciterData.name;
+            document.getElementById('reciter-riwaya').textContent = currentReciterData.riwaya || 'حفص عن عاصم';
+            playerContent.style.display = 'block'; // Show the player
+
+            // --- Initialize Plyr ---
+            player = new Plyr('#audio', {
+                 tooltips: { controls: true, seek: true },
+                 i18n: { /* Translations */
+                    play: 'تشغيل', pause: 'إيقاف مؤقت', mute: 'كتم الصوت', unmute: 'إلغاء كتم الصوت',
+                    enterFullscreen: 'ملء الشاشة', exitFullscreen: 'الخروج من ملء الشاشة',
+                    settings: 'الإعدادات', speed: 'السرعة', normal: 'عادي',
+                    captions: 'الترجمة', disabled: 'معطل', enabled: 'مفعل',
+                 }
+             });
+            // Make player globally accessible if needed by common.js
+            window.player = player;
+
+
+            // --- Get DOM Elements ---
+             const chapterSelect = document.getElementById('chapter-select');
+             const audio = document.getElementById('audio');
+             const downloadLink = document.getElementById('download-link');
+             const downloadButton = document.getElementById('download-button');
+             const searchInput = document.getElementById('search-input');
+             const currentSurahDisplay = document.getElementById('current-surah');
+             const autoplayToggle = document.getElementById('autoplay-toggle');
+             const favoriteButton = document.getElementById('favorite-button');
+             const favoriteIcon = favoriteButton.querySelector('i');
+
+            // --- Populate Surah List ---
+            function populateChapterList(chapters) {
+                 chapterSelect.innerHTML = '<option value="">اختر سورة</option>';
+                 if (typeof chapterData !== 'undefined') {
+                     chapters.forEach(chapter => {
+                         const option = document.createElement('option');
+                         option.value = chapter.index;
+                         option.textContent = `${String(chapter.index).padStart(3, '0')} - ${chapter.name}`;
+                         chapterSelect.appendChild(option);
+                     });
+                 }
+             }
+
+             // --- Update Favorite Button Status ---
+             function updateFavoriteButtonStatus() {
+                 const selectedSurahIndex = chapterSelect.value;
+                 if (selectedSurahIndex && currentReciterId) {
+                     favoriteButton.disabled = false;
+                     if (isFavorite(currentReciterId, selectedSurahIndex)) {
+                         favoriteIcon.classList.remove('far'); // Outline
+                         favoriteIcon.classList.add('fas');    // Filled
+                          favoriteButton.classList.add('is-favorite');
+                          favoriteButton.title = "إزالة من المفضلة";
+                     } else {
+                         favoriteIcon.classList.remove('fas');
+                         favoriteIcon.classList.add('far');
+                         favoriteButton.classList.remove('is-favorite');
+                          favoriteButton.title = "إضافة للمفضلة";
+                     }
+                 } else {
+                     favoriteButton.disabled = true;
+                      favoriteIcon.classList.remove('fas');
+                      favoriteIcon.classList.add('far');
+                       favoriteButton.classList.remove('is-favorite');
+                       favoriteButton.title = "اختر سورة للإضافة للمفضلة";
+                 }
+             }
+
+
+             // --- Update Player Logic ---
+             function updatePlayer(chapterIndex, shouldPlay = false) {
+                  const surahName = getSurahNameByIndex(chapterIndex); // From common.js or data.js
+                  if (chapterIndex && currentReciterData && surahName) {
+                      const paddedIndex = String(chapterIndex).padStart(3, '0');
+                      // Ensure audioBaseUrl ends with a slash
+                      const baseUrl = currentReciterData.audioBaseUrl.endsWith('/') ? currentReciterData.audioBaseUrl : currentReciterData.audioBaseUrl + '/';
+                      const audioSource = `${baseUrl}${paddedIndex}.mp3`;
+
+                      // Update audio source, download link, and Plyr
+                      audio.src = audioSource;
+                      downloadLink.href = audioSource;
+                       downloadLink.download = `[${paddedIndex}]_${surahName}_${currentReciterData.name.replace(/ /g, '_')}.mp3`;
+                       downloadButton.disabled = false;
+
+                      player.source = {
+                          type: 'audio',
+                          title: `سورة ${surahName} - ${currentReciterData.name}`,
+                          sources: [{ src: audioSource, type: 'audio/mp3' }],
+                      };
+
+                      currentSurahDisplay.textContent = `سورة ${surahName}`; // Just the name now
+                       saveLastSurahForReciter(currentReciterId, chapterIndex); // Save last played for this reciter
+                       updateFavoriteButtonStatus(); // Update favorite button state
+
+                       if(shouldPlay) {
+                           player.play().catch(e => console.error("Auto-play failed:", e)); // Attempt to play
+                       }
+
+                  } else {
+                      // Clear player if no chapter selected or invalid data
+                      audio.src = '';
+                      downloadLink.href = '#';
+                      downloadLink.removeAttribute('download');
+                      downloadButton.disabled = true;
+                      if (player.source) { player.source = null; } // Check if source exists before setting to null
+                      currentSurahDisplay.innerHTML = ' ';
+                       updateFavoriteButtonStatus(); // Disable favorite button
+                  }
+              }
+
+             // --- Event Listeners ---
+             chapterSelect.addEventListener('change', function () {
+                 updatePlayer(this.value);
+                  // Optional: player.play(); // Play automatically on selection
+             });
+
+             searchInput.addEventListener('input', function () {
+                 const searchTerm = this.value.toLowerCase().trim();
+                 const filteredChapters = chapterData.filter(chapter =>
+                     chapter.name.toLowerCase().includes(searchTerm) ||
+                     String(chapter.index).includes(searchTerm) // Allow searching by number part
+                 );
+                 populateChapterList(filteredChapters);
+             });
+
+             player.on('ended', event => {
+                 if (autoplayToggle.checked) {
+                     const currentVal = parseInt(chapterSelect.value);
+                     if (currentVal && currentVal < 114) {
+                         const nextVal = currentVal + 1;
+                         chapterSelect.value = nextVal;
+                         updatePlayer(nextVal, true); // Update and play next
+                     }
+                 }
+             });
+
+             favoriteButton.addEventListener('click', () => {
+                  const selectedSurahIndex = chapterSelect.value;
+                  if (!selectedSurahIndex || !currentReciterId) return;
+
+                  if (isFavorite(currentReciterId, selectedSurahIndex)) {
+                      removeFavorite(currentReciterId, selectedSurahIndex);
+                      console.log("Removed from favorites"); // Feedback
+                  } else {
+                       const added = addFavorite(currentReciterId, selectedSurahIndex);
+                       if(added) {
+                          console.log("Added to favorites"); // Feedback
+                       }
+                  }
+                  updateFavoriteButtonStatus(); // Update button immediately
+             });
+
+             // --- Initialization ---
+              if (typeof chapterData !== 'undefined') {
+                 populateChapterList(chapterData); // Initial population
+             } else {
+                 console.error("chapterData is not defined. Make sure data.js is loaded correctly.");
+                 chapterSelect.innerHTML = '<option value="">خطأ في تحميل السور</option>';
+             }
+
+
+             // Load last played surah *for this specific reciter* or the one from URL
+             const targetSurah = initialSurah || getLastSurahForReciter(currentReciterId);
+
+             if (targetSurah && typeof chapterData !== 'undefined') {
+                  const exists = chapterData.some(ch => ch.index == targetSurah);
+                  if(exists) {
+                       chapterSelect.value = targetSurah;
+                       updatePlayer(targetSurah, !!initialSurah); // Auto-play ONLY if coming from favorites link
+                  } else {
+                       updateFavoriteButtonStatus(); // Ensure button state is correct even if saved surah invalid
+                  }
+             } else {
+                 updateFavoriteButtonStatus(); // Ensure button state is correct initially
+                 currentSurahDisplay.innerHTML = 'اختر سورة للبدء'; // Initial prompt
+             }
+
+             // Load and setup autoplay toggle state
+             const savedAutoplay = localStorage.getItem('autoplayEnabled'); // Using a general key now
+             autoplayToggle.checked = savedAutoplay === 'true';
+             autoplayToggle.addEventListener('change', () => {
+                  localStorage.setItem('autoplayEnabled', autoplayToggle.checked);
+             });
+
+        }); // End DOMContentLoaded
+    </script>
+</body>
+</html>

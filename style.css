@@ -1,0 +1,577 @@
+/* style.css */
+:root {
+    --primary-color: #00796b; /* Teal */
+    --primary-darker: #004d40;
+    --secondary-color: #f5f5f5;
+    --text-color: #333;
+    --bg-color: #e0f2f7; /* Light Cyan */
+    --bg-gradient-start: #e0f7fa;
+    --bg-gradient-end: #ffffff;
+    --container-bg: #ffffff;
+    --border-color: #ddd;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --input-bg: #f0f0f0;
+    --hover-bg: #e0e0e0;
+    --icon-color: var(--primary-color);
+    --heart-color: #e91e63; /* Pink for favorites */
+    --heart-outline-color: #aaa;
+}
+
+body.dark-mode {
+    --primary-color: #26a69a;
+    --primary-darker: #00796b;
+    --secondary-color: #424242;
+    --text-color: #e0e0e0;
+    --bg-color: #212121;
+    --bg-gradient-start: #37474f;
+    --bg-gradient-end: #263238;
+    --container-bg: #333;
+    --border-color: #555;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --input-bg: #555;
+    --hover-bg: #616161;
+    --icon-color: var(--primary-color);
+    --heart-color: #f06292; /* Lighter Pink for dark mode */
+    --heart-outline-color: #888;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(to bottom, var(--bg-gradient-start), var(--bg-gradient-end));
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    direction: rtl; /* Default direction */
+}
+
+.main-container { /* General container for index/favorites */
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.player-container { /* Container specific for player page */
+    background: var(--container-bg);
+    padding: 30px 35px;
+    border-radius: 15px;
+    max-width: 550px;
+    width: 90%;
+    margin: 30px auto; /* Center player container */
+    box-shadow: 0 12px 30px var(--shadow-color);
+    text-align: center;
+    position: relative;
+    transition: background-color 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+
+/* General Styles */
+h1, h2 {
+    color: var(--primary-darker);
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+body.dark-mode h1, body.dark-mode h2 {
+    color: var(--primary-color);
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+a:hover {
+    color: var(--primary-darker);
+}
+body.dark-mode a:hover {
+    color: #4db6ac; /* Lighter hover for dark mode */
+}
+
+button, select, input[type="text"] {
+    font-family: inherit;
+    font-size: 16px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    box-sizing: border-box; /* Ensure padding is included in width */
+}
+button {
+    cursor: pointer;
+     background-color: var(--primary-color);
+     color: white;
+     border: none;
+     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+button:hover:not(:disabled) { /* Add :not(:disabled) */
+     background-color: var(--primary-darker);
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+     box-shadow: none; /* Remove shadow when disabled */
+}
+body.dark-mode button:disabled {
+     background-color: #555; /* Darker disabled in dark mode */
+     color: #999;
+}
+
+/* Input focus styles */
+select:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 121, 107, 0.2); /* Subtle focus ring */
+}
+
+/* Header/Nav common styles */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: var(--container-bg);
+    box-shadow: 0 2px 10px var(--shadow-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 30px; /* Add margin below header */
+    position: sticky; /* Make header sticky */
+    top: 0;
+    z-index: 1000; /* Ensure it stays on top */
+    transition: background-color 0.3s ease;
+}
+ .app-header .logo a {
+     font-size: 24px;
+     font-weight: 700;
+     color: var(--primary-darker);
+ }
+  body.dark-mode .app-header .logo a {
+     color: var(--primary-color);
+ }
+
+ .app-header nav ul {
+     list-style: none;
+     padding: 0;
+     margin: 0;
+     display: flex;
+     gap: 20px;
+     align-items: center; /* Align items vertically */
+ }
+ .app-header nav a {
+     font-size: 16px;
+     font-weight: 600;
+      transition: color 0.2s ease;
+      color: var(--text-color); /* Use text color for links */
+ }
+  .app-header nav a:hover,
+  .app-header nav a.active { /* Style for active link (optional) */
+      color: var(--primary-color);
+  }
+  body.dark-mode .app-header nav a:hover,
+  body.dark-mode .app-header nav a.active {
+      color: #4db6ac;
+  }
+
+
+/* Theme Toggle Button */
+#theme-toggle {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px; /* Icon size */
+    color: var(--icon-color);
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* Remove default button padding */
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+#theme-toggle:hover {
+    background-color: var(--hover-bg);
+    transform: scale(1.1);
+}
+ body.dark-mode #theme-toggle {
+     border-color: var(--primary-color);
+ }
+
+/* --- index.html Styles --- */
+.reciter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid */
+    gap: 25px;
+    padding: 0 15px; /* Add some padding */
+}
+
+.reciter-card {
+    background-color: var(--container-bg);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--shadow-color);
+    text-align: center;
+    padding: 20px 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+.reciter-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+     body.dark-mode & {
+         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+     }
+}
+
+.reciter-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 15px auto;
+    border: 4px solid var(--primary-color);
+    object-fit: cover;
+    background-color: var(--hover-bg); /* Placeholder bg color */
+}
+
+.reciter-card h3 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    color: var(--text-color); /* Use theme text color */
+    font-weight: 600;
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+}
+/* No need for specific dark mode h3 color if using var(--text-color) */
+
+.reciter-card p {
+    font-size: 14px;
+    color: #777;
+    margin: 0 0 15px 0;
+}
+body.dark-mode .reciter-card p {
+     color: #bbb;
+}
+
+.reciter-card a.listen-link {
+     display: inline-block;
+     background-color: var(--primary-color);
+     color: white !important; /* Ensure white text */
+     padding: 8px 15px;
+     border-radius: 6px;
+     font-size: 14px;
+     font-weight: 600;
+     transition: background-color 0.3s ease;
+     margin-top: auto; /* Pushes the link down */
+     text-decoration: none; /* Remove underline */
+}
+ .reciter-card a.listen-link i { margin-right: 5px; } /* Space before icon */
+ .reciter-card a.listen-link:hover {
+     background-color: var(--primary-darker);
+     color: white !important; /* Ensure white text on hover */
+ }
+
+
+/* --- player.html Styles --- */
+.player-container .profile-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        border: 5px solid var(--primary-color);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        object-fit: cover;
+        background-color: var(--hover-bg); /* Placeholder bg color */
+}
+ .player-container h1 {
+     font-size: 26px;
+     font-weight: 700;
+     color: var(--primary-darker);
+     margin-bottom: 5px;
+ }
+  body.dark-mode .player-container h1 {
+      color: var(--primary-color);
+  }
+ .player-container .reciter-title {
+     font-size: 16px;
+     color: #777;
+     margin-bottom: 25px;
+ }
+ body.dark-mode .player-container .reciter-title {
+     color: #bbb;
+ }
+
+ .search-container {
+    position: relative;
+    margin-bottom: 15px;
+ }
+ .search-container input[type="text"] {
+    width: 100%;
+    padding: 12px 40px 12px 15px; /* Padding LTR for icon */
+ }
+ .search-container i {
+    position: absolute;
+    right: 15px; /* Adjusted for RTL */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none; /* Prevent icon blocking input click */
+ }
+ body.dark-mode .search-container i { color: #888; }
+
+ #chapter-select {
+    width: 100%;
+    padding: 12px 15px 12px 40px; /* Padding LTR for arrow */
+    margin-bottom: 15px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23aaa" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: left 15px center; /* Adjusted for RTL */
+    background-size: 16px 12px;
+    cursor: pointer;
+ }
+ body.dark-mode #chapter-select {
+     background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23888" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+ }
+
+
+/* Favorite Button Style */
+#favorite-button {
+    background: none;
+    border: none;
+    color: var(--heart-outline-color); /* Default: Outline */
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+     transition: color 0.3s ease, transform 0.2s ease;
+     vertical-align: middle;
+}
+ #favorite-button:disabled {
+     opacity: 0.5;
+     cursor: not-allowed;
+     color: #ccc !important; /* Force disabled color */
+      transform: none !important; /* Prevent hover effect */
+ }
+  body.dark-mode #favorite-button:disabled {
+      color: #777 !important;
+ }
+
+#favorite-button.is-favorite {
+    color: var(--heart-color); /* Filled color when favorite */
+}
+#favorite-button:hover:not(:disabled) {
+    transform: scale(1.2);
+}
+
+.controls-extra {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px; /* Add margin above controls */
+    flex-wrap: wrap;
+    gap: 15px; /* Consistent gap */
+}
+.options-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-grow: 1; /* Allow it to take space */
+}
+
+/* --- favorites.html Styles --- */
+ .favorites-list {
+     list-style: none;
+     padding: 0;
+     margin: 0;
+ }
+
+ .favorite-item {
+     background-color: var(--container-bg);
+     border: 1px solid var(--border-color);
+     border-radius: 8px;
+     padding: 15px 20px;
+     margin-bottom: 15px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     flex-wrap: wrap;
+     gap: 15px; /* Increased gap */
+     transition: background-color 0.3s ease, border-color 0.3s ease;
+ }
+  .favorite-item:hover {
+      background-color: var(--hover-bg);
+      border-color: #bbb; /* Slightly darker border on hover */
+        body.dark-mode & {
+          border-color: #777;
+        }
+  }
+
+ .favorite-item .info {
+     flex-grow: 1;
+     min-width: 200px; /* Ensure info doesn't get too squeezed */
+ }
+ .favorite-item .info .surah-name {
+     font-weight: 600;
+     font-size: 18px;
+     color: var(--primary-darker);
+     margin-bottom: 3px;
+     display: block;
+ }
+ body.dark-mode .favorite-item .info .surah-name {
+     color: var(--primary-color);
+ }
+
+  .favorite-item .info .reciter-name {
+      font-size: 15px;
+      color: #666;
+  }
+   body.dark-mode .favorite-item .info .reciter-name {
+       color: #ccc;
+   }
+
+ .favorite-item .actions {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+ }
+ .favorite-item .actions button {
+     padding: 8px 12px;
+     font-size: 14px;
+     display: inline-flex; /* Align icon and text */
+     align-items: center;
+     gap: 5px;
+ }
+  .favorite-item .actions .play-btn {
+      background-color: var(--primary-color);
+  }
+   .favorite-item .actions .play-btn:hover {
+       background-color: var(--primary-darker);
+   }
+   .favorite-item .actions .remove-btn {
+       background-color: #f44336; /* Red for remove */
+       color: white !important; /* Ensure white text */
+   }
+    .favorite-item .actions .remove-btn:hover {
+        background-color: #d32f2f;
+    }
+     body.dark-mode .favorite-item .actions .remove-btn {
+          background-color: #e57373;
+          color: #333 !important; /* Darker text on light red */
+     }
+     body.dark-mode .favorite-item .actions .remove-btn:hover {
+          background-color: #ef5350;
+      }
+
+  .empty-favorites {
+      text-align: center;
+      font-size: 18px;
+      color: #888;
+      padding: 40px 20px;
+      background-color: var(--container-bg);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      margin-top: 30px;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+   .empty-favorites i { /* Style icon */
+        font-size: 24px;
+        margin-bottom: 10px;
+        display: block;
+        color: var(--primary-color);
+   }
+   body.dark-mode .empty-favorites {
+       color: #aaa;
+       background-color: rgba(0,0,0,0.1); /* Slight bg tint */
+   }
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .app-header {
+        padding: 10px 15px;
+        flex-direction: column; /* Stack logo and nav */
+        gap: 10px;
+        position: static; /* Remove sticky header on small screens maybe? Or keep it */
+    }
+     .app-header .logo a {
+         font-size: 20px;
+     }
+     .app-header nav ul {
+         gap: 15px;
+         justify-content: center; /* Center nav items */
+         flex-wrap: wrap; /* Allow nav items to wrap */
+     }
+     .app-header nav a {
+         font-size: 15px;
+     }
+
+     .main-container {
+         padding: 15px;
+         margin: 20px auto;
+     }
+
+     .reciter-grid {
+         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+         gap: 15px;
+     }
+     .reciter-card {
+         padding: 15px 10px;
+     }
+      .reciter-card img {
+          width: 80px;
+          height: 80px;
+      }
+      .reciter-card h3 {
+          font-size: 16px;
+      }
+      .reciter-card p {
+          font-size: 13px;
+      }
+      .reciter-card a.listen-link {
+          padding: 6px 12px;
+          font-size: 13px;
+      }
+
+      .player-container {
+          padding: 20px 25px;
+          width: 95%;
+          margin: 20px auto;
+      }
+      .player-container h1 { font-size: 22px; }
+
+     .favorite-item {
+         /* Keep flex-row but allow wrapping naturally */
+         gap: 10px;
+     }
+      .favorite-item .actions {
+          width: 100%; /* Make actions take full width when wrapped */
+          justify-content: flex-end; /* Align buttons right */
+          margin-top: 10px; /* Add space when wrapped */
+      }
+}
+
+ @media (max-width: 480px) {
+      h1, h2 { font-size: 22px; } /* Reduce heading size further */
+      .reciter-grid {
+          grid-template-columns: 1fr; /* Single column */
+      }
+       .player-container {
+           padding: 15px 20px;
+       }
+      .favorite-item .info .surah-name { font-size: 16px; }
+      .favorite-item .info .reciter-name { font-size: 14px; }
+      .favorite-item .actions button { font-size: 13px; padding: 6px 10px; }
+
+       /* Adjust header nav further if needed */
+       .app-header nav ul { gap: 10px; }
+       .app-header nav a { font-size: 14px; }
+ }
