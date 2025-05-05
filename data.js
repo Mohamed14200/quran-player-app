@@ -22,8 +22,8 @@ const recitersData = {
      "minsh_mjwd": {
           name: "محمد صديق المنشاوي",
           riwaya: "حفص عن عاصم (مجود)",
-          image: "https://upload.wikimedia.org/wikipedia/commons/d/d6/Mohamed_Siddiq_El-Minshawi_in_the_1950s.png",
-          audioBaseUrl: "https://server10.mp3quran.net/minsh_mjwd/"
+          image: "https://media.unitedmuslimworld.com/img/24/06/20/22294.jpg",
+          audioBaseUrl: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad"
       },
      "ajm": {
           name: "أحمد بن علي العجمي",
