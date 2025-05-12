@@ -36,6 +36,12 @@ const recitersData = {
           riwaya: "حفص عن عاصم",
           image: "https://i1.sndcdn.com/artworks-000015003106-f8wkdc-t500x500.jpg",
           audioBaseUrl: "https://server8.mp3quran.net/afs/"
+      },
+      "hthfi": {
+          name: "علي بن عبد الرحمن الحذيفي",
+          riwaya: "حفص عن عاصم",
+          image: "https://i1.sndcdn.com/artworks-000097985197-ftoaff-t500x500.jpg",
+          audioBaseUrl: "https://server9.mp3quran.net/hthfi/"
       }
     // أضف المزيد من القراء هنا بنفس الهيكل
 };
