@@ -10,13 +10,13 @@ const recitersData = {
     "maher": {
         name: "ماهر المعيقلي",
         riwaya: "حفص عن عاصم",
-        image: "https://i1.sndcdn.com/artworks-000107134421-e5068a-t500x500.jpg", // Updated link
+        image: "https://upload.wikimedia.org/wikipedia/commons/9/90/Maher_Al_Mueaqly.png", // Updated link
         audioBaseUrl: "https://server12.mp3quran.net/maher/"
     },
     "abdulbasit_murattal": {
          name: "عبد الباسط عبد الصمد",
          riwaya: "حفص عن عاصم (مرتل)",
-         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Abdul-Basit_Abdus-Samad.jpg/220px-Abdul-Basit_Abdus-Samad.jpg",
+         image: "https://i.pinimg.com/originals/72/ea/1c/72ea1cc09038fd8a1556358a670c245c.jpg",
          audioBaseUrl: "https://server7.mp3quran.net/basit/"
      },
      "minsh_mjwd": {
@@ -28,13 +28,13 @@ const recitersData = {
      "ajm": {
           name: "أحمد بن علي العجمي",
           riwaya: "حفص عن عاصم",
-          image: "https://islamweb.net/audio/library/reciters/31.jpg",
+          image: "https://ar.assabile.com/media/photo/full_size/ahmed-al-ajmi-979.jpg",
           audioBaseUrl: "https://server10.mp3quran.net/ajm/"
      },
       "afs": {
           name: "مشاري راشد العفاسي",
           riwaya: "حفص عن عاصم",
-          image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/MishariAlAfasiOfficialPicture.jpg/220px-MishariAlAfasiOfficialPicture.jpg",
+          image: "https://i1.sndcdn.com/artworks-000015003106-f8wkdc-t500x500.jpg",
           audioBaseUrl: "https://server8.mp3quran.net/afs/"
       }
     // أضف المزيد من القراء هنا بنفس الهيكل
